@@ -1,6 +1,7 @@
 (ns common.repl
   (:use arcadia.core arcadia.linear)
   (:import ArcadiaBehaviour ArcadiaState
+           [CtWheels TagsAndLayers]
            [System.Reflection BindingFlags]
            [UnityEngine GameObject Resources Camera Vector3]
            [UnityEngine.SceneManagement SceneManager]
@@ -78,9 +79,10 @@
           (find-ns (symbol q)))))))
 
 (defn keypath "path, but in keyword form" [id]
-  (if-let [ns (where id)]
-    (keyword (str ns "/" (aka id)))
-    (keyword (aka id))))
+  (let [p (path id)]
+    (if-let [p (and (string? p) (re-find #".*(?=/)" p))]
+      (keyword (str/replace p \/ \.) (aka id))
+      (keyword (aka id)))))
 
 (defn- ensure-type [t]
   (cond
@@ -347,6 +349,14 @@
 (alter-var-root #'x/keypath (constantly keypath))
 (alter-var-root #'x/resource (constantly resource))
 (alter-var-root #'x/clone! (constantly clone!))
+
+(defn tag-all! "creates tags for every GameObject resource found with id.\n  You can pass an empty string to really tag all."
+  [id]
+  (run! #(TagsAndLayers/AddTag %)
+        (into #{}
+              (comp (keep keypath)
+                    (map str))
+              (resources id GameObject))))
 
 ;; REPL UX possibly todo: move to separate file, same ns
 

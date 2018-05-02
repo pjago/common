@@ -18,7 +18,7 @@ Examples:
 (path nil) ;=> System.InvalidCastException.. jk it returns ""
 ```
 
-The **path** function is used by three other functions: **resource**, **clone!** and **object-search**.
+The **path** function is used by three other functions: **resource**, **clone!** and **object-search**.<br/>
 So if you would like to clone the barrel, you can call (clone! ::barrel) from it's namespace.<br/>
 Now let's say you're looking for anything named barrel:
 
@@ -44,7 +44,7 @@ In short, the names you name can be shared with anyone, and we all can access ou
 Testing on keywords is pretty standard clojure, and it's open to extensions if done with **isa?**.<br/>
 For me it's convenient for procedural generation, and dealing with hierarchy dependencies.
 
-The common.repl is meant to be Editor only, but you can use common.processing to achieve a simillar effect in production.
+The common.repl is meant to be Editor only, but you can use common.processing to achieve a simillar effect in production.<br/>
 It basically instruments 'reducing' functions in the format of barrel:
 
 ```clojure
@@ -55,7 +55,7 @@ It basically instruments 'reducing' functions in the format of barrel:
   ([gob child] (state+ child :value (first (shuffle [1 5])))) ;step
   ([gob] (hook+ gob :update :revenge #'update))) ;complete
   
-; Then you (hopefully) can something as:
+; Then you (hopefully) can do something as:
 
 (def barrels
   (->> (cons nil (repeat barrel))  ;same structure as init: first is parent, rest is children

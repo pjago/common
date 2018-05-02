@@ -1,7 +1,6 @@
 (ns common.processing
   (:use [arcadia.core :exclude [if-cmpt log children]] arcadia.linear)
   (:import [UnityEngine Application GameObject MeshRenderer Rigidbody RigidbodyConstraints]
-           [CtWheels TagsAndLayers]
            [clojure.lang IMeta IDeref]
            ArcadiaState ArcadiaBehaviour |ArcadiaBehaviour+IFnInfo[]|)
   (:refer-clojure :exclude [map replace tree-seq doto memoize])
@@ -136,16 +135,17 @@
 
 ;tagged assimilates objects-tagged to objects-search
 ;it also facilitates the usage of isa? with tags
-(defn tagged [rf]
+(defn tagged "if the tag doesn't yet exists, you can run common.repl/tag-all! to create"
+  [rf]
   (let [t (volatile! "Untagged")]
     (fn
       ([gob child] (rf gob child))
       ([]
        (c/doto (rf) (->> first keypath str (vreset! t))))
       ([gob]
-       (if (and (instance? GameObject gob) 
-                (TagsAndLayers/AddTag @t))
-         (set! (.tag gob) @t))
+       (try
+         (if (instance? GameObject gob) (set! (.tag gob) @t))
+         (catch Exception _))
        (rf gob)))))
 
 (defn freeze [pos & [rot]]
